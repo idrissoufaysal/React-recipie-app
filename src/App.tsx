@@ -20,14 +20,14 @@ function App() {
 
   const apiUrl = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 
-  const allRec = async () => {
+  const seachRecipie = async () => {
     try {
       setIsloading(true);
       const res = await axios.get(apiUrl + query);
       const myData = res.data.meals;
       console.log(myData);
       setRecete(myData);
-      setIsloading(true);
+      setIsloading(false);
     } catch (error) {
       console.log(error);
       setError(true);
@@ -35,50 +35,65 @@ function App() {
     }
   };
 
+  function handlSearch(e: React.FormEventHandler<HTMLFormElement> | undefined) {
+    seachRecipie();
+  }
+
   useEffect(() => {
-    allRec();
-  }, []); 
+    seachRecipie();
+  }, []);
 
   return (
     <Router>
       <div>
+        <Recipie />
         <h1>our recipie app</h1>
-        <SerchText/>
-        <div className="recetes">
+        {/* <SerchText
+        value={query}
+        handleSubmit={handlSearch}
+        onChange={ (e)=>{setQery(e.target.value)}}
+        isLoading={isLoading}
+        /> */}
 
-        {recete.length != 0 ? (
-          recete.map((rec: any) => (
-            <div key={rec.idMeal} className="card">
-              <div className="image">
-                <img
-                  src={rec.strMealThumb}
-                  alt={rec.strMeal}
-                  className="card-image"
-                />
-              </div>
-              <div className="card-body">
-                
-                <span>{rec.strCategory} </span>
-                <h5>{rec.strMeal}</h5>
-                <div className="button">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            seachRecipie();
+          }}
+        >
+          <input
+            value={query}
+            disabled={isLoading}
+            placeholder="Rechercher une recette.."
+            className="form-control"
+            onChange={(e) => {
+              setQery(e.target.value);
+            }}
+          />
 
-                <Link className="ingrediant"
-                  to={
-                    "https://www.themealdb.com/api/json/v1/1/lookup.php?i=" +
-                    rec.idMeal
-                  }
-                  >
-                  Ingredient
-                </Link>
-                    </div>
-              </div>
-            </div>
-          ))
+          <input
+            type="submit"
+            className="btn"
+            disabled={isLoading}
+            value="Rechercher"
+          />
+        </form>
+        <div className="recepie">
+          {recete.length != 0 ? (
+            recete.map((rec: any) => (
+              <Recipie
+                key={rec.idMeal}
+                strCategory={rec.strCategory}
+                strMeal={rec.strMeal}
+                strMealThumb={rec.strMealThumb}
+                idMeal={rec.idMeal}
+              />
+            ))
           ) : (
-            <h3>recipie not found</h3>
-            )}
-            </div>
-            </div>
+            <h3 style={{ alignItems: "center" }}>recipie not found</h3>
+          )}
+        </div>
+      </div>
     </Router>
   );
 }
