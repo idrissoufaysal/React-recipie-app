@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+import "./App.scss";
 import "./components/recipies.scss";
 import Recipie from "./components/recipies.tsx";
 import axios from "axios";
@@ -26,7 +26,6 @@ function App() {
       const res = await axios.get(apiUrl + query);
       const myData = res.data.meals;
       console.log(myData);
-
       setRecete(myData);
       setIsloading(true);
     } catch (error) {
@@ -38,13 +37,15 @@ function App() {
 
   useEffect(() => {
     allRec();
-  }, []);
+  }, []); 
 
   return (
     <Router>
       <div>
         <h1>our recipie app</h1>
         <SerchText/>
+        <div className="recetes">
+
         {recete.length != 0 ? (
           recete.map((rec: any) => (
             <div key={rec.idMeal} className="card">
@@ -56,23 +57,28 @@ function App() {
                 />
               </div>
               <div className="card-body">
+                
                 <span>{rec.strCategory} </span>
                 <h5>{rec.strMeal}</h5>
-                <Link
+                <div className="button">
+
+                <Link className="ingrediant"
                   to={
                     "https://www.themealdb.com/api/json/v1/1/lookup.php?i=" +
                     rec.idMeal
                   }
-                >
-                  Link
+                  >
+                  Ingredient
                 </Link>
+                    </div>
               </div>
             </div>
           ))
-        ) : (
-          <h3>recipie not found</h3>
-        )}
-      </div>
+          ) : (
+            <h3>recipie not found</h3>
+            )}
+            </div>
+            </div>
     </Router>
   );
 }
